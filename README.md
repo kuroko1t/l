@@ -1,13 +1,16 @@
 # ls
-This library is an ls command that displays the full path of a file.
+This library is ls command that displays the full path of a file.
+
+* show full path
+* show git branch name
 
 ## Example
 
 ```bash
 $ go run main.go
-./README.md
-./go.mod
-./go.sum
-./main.go
-./tt
+../dcp(master)
+../gkill(master)
+../ls(show_detail)
+../venv
+../tmp
 ```
