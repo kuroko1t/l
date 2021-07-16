@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/go-git/go-git/v5"
 )
 
 func main() {
@@ -20,6 +21,19 @@ func main() {
 	} else {
 		dirwalk(args[0])
 	}
+}
+
+func checkGitBranch(dirname string) bool {
+	r, err := git.PlainOpen(dirname)
+	if err != nil {
+		return true
+	}
+	ref, err := r.Head()
+	if err != nil {
+		return true
+	}
+	color.HiBlue(dirname + "(" + ref.Name().Short() + ")")
+	return false
 }
 
 func checkPrint(filename string) {
@@ -46,10 +60,12 @@ func checkPrint(filename string) {
 
 func fileModeCheck(file fs.FileInfo, filename string) bool {
 	if file.IsDir() {
-		color.Blue(filename)
-	} else if file.Mode() &os.ModeSymlink == os.ModeSymlink {
+		if checkGitBranch(filename) {
+			color.HiBlue(filename)
+		}
+	} else if file.Mode()&os.ModeSymlink == os.ModeSymlink {
 		color.Cyan(filename)
-	} else if file.Mode() & 0100 == 0100 {
+	} else if file.Mode()&0100 == 0100 {
 		color.Green(filename)
 	} else {
 		return true
