@@ -11,7 +11,7 @@ import (
 	"strings"
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
-	"time"
+	//"time"
 	"sort"
 )
 
@@ -28,7 +28,7 @@ const (
 
 type Info struct {
 	color Color
-	modTime time.Time
+	fileinfo fs.FileInfo
 }
 
 var fileinfoMap map[string]Info
@@ -59,67 +59,43 @@ func checkGitBranch(file fs.FileInfo, dirname string) bool {
 	if err != nil {
 		return true
 	}
-	printString := ""
-	if detailFlag {
-		fileModeString := fmt.Sprintf("%v", file.Mode())
-		fileModeString += fmt.Sprintf(" %v", file.Size())
-		fileModeString += fmt.Sprintf(" %v ", file.ModTime().Format("2006/01/02 15:04"))
-		printString = fileModeString + " " + dirname + "(" + ref.Name().Short() + ")"
-	} else {
-		printString = dirname + "(" + ref.Name().Short() + ")"
-	}
-	fileinfoMap[printString] = Info{Blue, file.ModTime()}
+	printString := dirname + "(" + ref.Name().Short() + ")"
+	fileinfoMap[printString] = Info{Blue, file}
 	return false
 }
 
 func checkExt(file fs.FileInfo, filename string) {
-	printString := ""
-	if detailFlag {
-		fileModeString := fmt.Sprintf("%v", file.Mode())
-		fileModeString += fmt.Sprintf(" %v", file.Size())
-		fileModeString += fmt.Sprintf(" %v ", file.ModTime().Format("2006/01/02 15:04"))
-		printString = fileModeString + filename
-	} else {
-		printString = filename
-	}
+	printString := filename
 	ext := filepath.Ext(filename)
 	switch ext {
 	case ".png":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".jpg":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".svg":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".mp4":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".mp3":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".gz":
-		fileinfoMap[printString] = Info{Magenta, file.ModTime()}
+		fileinfoMap[printString] = Info{Magenta, file}
 	case ".zip":
 	default:
-		fileinfoMap[printString] = Info{White, file.ModTime()}
+		fileinfoMap[printString] = Info{White, file}
 	}
 }
 
 func fileModeCheck(file fs.FileInfo, filename string) bool {
-	printString := ""
-	if detailFlag {
-		fileModeString := fmt.Sprintf("%v", file.Mode())
-		fileModeString += fmt.Sprintf(" %v", file.Size())
-		fileModeString += fmt.Sprintf(" %v ", file.ModTime().Format("2006/01/02 15:04"))
-		printString = fileModeString + filename
-	} else {
-		printString = filename
-	}
+	printString := filename
 	if file.IsDir() {
 		if checkGitBranch(file, filename) {
-			fileinfoMap[printString] = Info{Blue, file.ModTime()}
+			fileinfoMap[printString] = Info{Blue, file}
 		}
 	} else if file.Mode()&os.ModeSymlink == os.ModeSymlink {
-		fileinfoMap[printString] = Info{Cyan, file.ModTime()}
+		fileinfoMap[printString] = Info{Cyan, file}
 	} else if file.Mode()&0100 == 0100 {
-		fileinfoMap[printString] = Info{Green, file.ModTime()}
+		fileinfoMap[printString] = Info{Green, file}
 	} else {
 		return true
 	}
@@ -159,17 +135,26 @@ func sortedKeys(mapInt interface{}) []string {
 
 func PrintFiles() {
 	for _, key := range sortedKeys(fileinfoMap) {
+		printString := ""
+		if detailFlag {
+			fileModeString := fmt.Sprintf("%v", fileinfoMap[key].fileinfo.Mode())
+			fileModeString += fmt.Sprintf(" %v", fileinfoMap[key].fileinfo.Size())
+			fileModeString += fmt.Sprintf(" %v ", fileinfoMap[key].fileinfo.ModTime().Format("2006/01/02 15:04"))
+			printString =  fileModeString + key
+		} else {
+			printString = key
+		}
 		switch fileinfoMap[key].color {
 		case Blue:
-			color.HiBlue(key)
+			color.HiBlue(printString)
 		case Magenta:
-			color.Magenta(key)
+			color.Magenta(printString)
 		case Green:
-			color.Green(key)
+			color.Green(printString)
 		case Cyan:
-			color.Cyan(key)
+			color.Cyan(printString)
 		default:
-			fmt.Println(key)
+			fmt.Println(printString)
 		}
 	}
 }
