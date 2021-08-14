@@ -70,11 +70,8 @@ func (by ByStr) Less(i, j int) bool {
 
 var detailFlag bool
 
-func init() {
-	flag.BoolVar(&detailFlag, "l", false, "show detail")
-}
-
 func main() {
+	flag.BoolVar(&detailFlag, "l", false, "show detail")
 	flag.Parse()
 	args := flag.Args()
 	if len(args) == 0 {
@@ -162,9 +159,7 @@ func dirwalk(dir string) []string {
 }
 
 func PrintFiles() {
-	fmt.Println(allFileInfo)
 	sort.Sort(ByStr{allFileInfo})
-	fmt.Println(allFileInfo)
 	for _, info := range allFileInfo {
 		switch info.color {
 		case Blue:
