@@ -117,6 +117,7 @@ func checkExt(file fs.FileInfo, filename string) {
 	case ".gz":
 		allFileInfo = append(allFileInfo, Info{Magenta, file, printString})
 	case ".zip":
+		allFileInfo = append(allFileInfo, Info{Magenta, file, printString})
 	default:
 		allFileInfo = append(allFileInfo, Info{White, file, printString})
 	}
