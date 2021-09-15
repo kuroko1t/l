@@ -1,4 +1,4 @@
-module github.com/kuroko1t/ls
+module github.com/kuroko1t/l
 
 go 1.16
 
